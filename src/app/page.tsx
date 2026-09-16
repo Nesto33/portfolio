@@ -1,69 +1,480 @@
-import Image from "next/image";
+// src/app/page.tsx
+"use client";
+
+import { useState } from "react";
+import { RESUME_DATA } from "@/data/resume";
+import BrainGraph from "@/components/BrainGraph";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  ArrowDown,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  X,
+  Mail,
+  MapPin,
+  Sparkles,
+} from "lucide-react";
+
+function GithubIcon({ className }: { className?: string }) {
+  return (
+    <svg role="img" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+    </svg>
+  );
+}
+
+function LinkedinIcon({ className }: { className?: string }) {
+  return (
+    <svg role="img" viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z" />
+    </svg>
+  );
+}
 
 export default function Home() {
+  const [eduIndex, setEduIndex] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const prevEdu = () => {
+    setEduIndex((prev) => (prev > 0 ? prev - 1 : RESUME_DATA.education.length - 1));
+  };
+
+  const nextEdu = () => {
+    setEduIndex((prev) => (prev < RESUME_DATA.education.length - 1 ? prev + 1 : 0));
+  };
+
+  const activeEdu = RESUME_DATA.education[eduIndex];
+
+  // 4 modules abstraits reliés selon une topologie de graphe
+  const abstractNodes = [
+    { x: 30, y: 25, label: "MOD 01" }, // M2 Info
+    { x: 70, y: 32, label: "MOD 02" }, // M2 Neuro
+    { x: 62, y: 72, label: "MOD 03" }, // L3 Psycho
+    { x: 25, y: 68, label: "MOD 04" }, // MPSI
+  ];
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <div className="h-screen w-full overflow-y-scroll snap-y snap-mandatory bg-[#060709] text-zinc-100 scroll-smooth selection:bg-cyan-500/30 selection:text-cyan-200">
+      {/* Navigation fixe */}
+      <header className="fixed top-0 inset-x-0 z-50 border-b border-white/5 bg-[#060709]/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+          <div className="flex items-center gap-2">
+            <span className="size-2 rounded-full bg-cyan-400 animate-ping" />
+            <span className="text-xs font-semibold tracking-wider uppercase text-zinc-100">
+              {RESUME_DATA.name}
+            </span>
+          </div>
+
+          <nav className="flex items-center gap-6 text-xs text-zinc-400 font-medium">
+            <a href="#hero" className="hover:text-cyan-400 transition">Intro</a>
+            <a href="#education" className="hover:text-cyan-400 transition">Connectome Path</a>
+          </nav>
+
+          <a
+            href={`mailto:${RESUME_DATA.contact.email}`}
+            className="rounded-full border border-cyan-500/40 bg-cyan-950/40 px-3.5 py-1 text-xs font-medium text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400 transition shadow-[0_0_15px_rgba(6,182,212,0.15)]"
+          >
+            Contact
+          </a>
+        </div>
+      </header>
+
+      {/* ================= SECTION 1 : HERO SLIDE ================= */}
+      <section
+        id="hero"
+        className="relative h-screen w-full snap-start flex flex-col items-center justify-center px-6 overflow-hidden"
+      >
+        <BrainGraph />
+
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_transparent_40%,_#060709_90%)] pointer-events-none" />
+
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+          className="relative z-10 max-w-3xl text-center space-y-6 pointer-events-none"
+        >
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-zinc-900/60 px-3.5 py-1.5 text-xs text-zinc-300 backdrop-blur-md pointer-events-auto">
+            <Sparkles className="size-3.5 text-cyan-400" />
+            <span>Connectomics · Software Architecture · Neural Data</span>
+          </div>
+
+          <h1 className="text-5xl sm:text-7xl font-bold tracking-tight text-white font-sans bg-gradient-to-b from-white via-zinc-200 to-zinc-500 bg-clip-text text-transparent">
+            {RESUME_DATA.name}
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+
+          <p className="text-lg sm:text-xl text-zinc-300 font-light max-w-xl mx-auto leading-relaxed">
+            {RESUME_DATA.headline}
           </p>
+
+          <div className="flex items-center justify-center gap-4 pt-2 pointer-events-auto">
+            <a
+              href={`mailto:${RESUME_DATA.contact.email}`}
+              className="flex items-center gap-2 rounded-xl bg-white px-5 py-2.5 text-xs font-semibold text-black hover:bg-zinc-200 transition shadow-lg"
+            >
+              <Mail className="size-4" />
+              <span>Get in touch</span>
+            </a>
+            <a
+              href={RESUME_DATA.contact.social.github}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-xl border border-white/10 bg-zinc-900/80 p-2.5 text-zinc-300 hover:border-cyan-500/50 hover:text-white transition"
+              aria-label="GitHub"
+            >
+              <GithubIcon className="size-4" />
+            </a>
+            <a
+              href={RESUME_DATA.contact.social.linkedin}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-xl border border-white/10 bg-zinc-900/80 p-2.5 text-zinc-300 hover:border-cyan-500/50 hover:text-white transition"
+              aria-label="LinkedIn"
+            >
+              <LinkedinIcon className="size-4" />
+            </a>
+          </div>
+        </motion.div>
+
+        <a
+          href="#education"
+          className="absolute bottom-10 z-20 flex flex-col items-center gap-2 text-xs text-zinc-500 hover:text-cyan-400 transition"
+        >
+          <span className="tracking-widest uppercase text-[10px]">Explore Academic Path</span>
+          <ArrowDown className="size-4 animate-bounce text-cyan-400" />
+        </a>
+      </section>
+
+      {/* ================= SECTION 2 : EDUCATION CONNECTOME SLIDER ================= */}
+      <section
+        id="education"
+        className="relative h-screen w-full snap-start flex items-center justify-center px-6 bg-[#060709] overflow-hidden"
+      >
+        <div className="relative z-10 mx-auto w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-12">
+          
+          {/* Côté Gauche (5 cols) : Carte Abstraite Connectomique */}
+          <div className="lg:col-span-5 flex flex-col items-center">
+            <div className="w-full flex items-center justify-between mb-4">
+              <span className="text-xs uppercase tracking-widest text-cyan-400 font-mono">
+                [ Neural Topology Map ]
+              </span>
+              <span className="text-xs text-zinc-500 font-mono">
+                0{eduIndex + 1} / 0{RESUME_DATA.education.length}
+              </span>
+            </div>
+
+            <div className="relative w-full aspect-square max-w-[380px] rounded-3xl border border-white/10 bg-zinc-950/70 backdrop-blur-2xl p-6 shadow-2xl flex items-center justify-center overflow-hidden">
+              <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100">
+                {/* Réseau d'arêtes de fond (axones secondaires) */}
+                <path
+                  d="M 30 25 Q 50 15 70 32 Q 80 55 62 72 Q 40 85 25 68 Q 15 45 30 25 Z"
+                  fill="none"
+                  stroke="rgba(255,255,255,0.06)"
+                  strokeWidth="0.7"
+                  strokeDasharray="2,3"
+                />
+                <line
+                  x1="30" y1="25"
+                  x2="62" y2="72"
+                  stroke="rgba(56,189,248,0.12)"
+                  strokeWidth="0.8"
+                  strokeDasharray="2,3"
+                />
+                <line
+                  x1="70" y1="32"
+                  x2="25" y2="68"
+                  stroke="rgba(244,63,94,0.12)"
+                  strokeWidth="0.8"
+                  strokeDasharray="2,3"
+                />
+
+                {/* Arêtes primaires connectant les étapes */}
+                {abstractNodes.map((n, i) => {
+                  const nextNode = abstractNodes[(i + 1) % abstractNodes.length];
+                  const isCurrentTraversing = eduIndex === i;
+                  return (
+                    <line
+                      key={i}
+                      x1={n.x}
+                      y1={n.y}
+                      x2={nextNode.x}
+                      y2={nextNode.y}
+                      stroke={isCurrentTraversing ? "#38bdf8" : "rgba(255,255,255,0.18)"}
+                      strokeWidth={isCurrentTraversing ? "1.6" : "0.9"}
+                      strokeDasharray={isCurrentTraversing ? "2,2" : "1.5,3"}
+                      className={isCurrentTraversing ? "transition-all duration-500" : ""}
+                    />
+                  );
+                })}
+
+                {/* 4 Nœuds / Clusters principaux */}
+                {abstractNodes.map((node, i) => {
+                  const isActive = eduIndex === i;
+                  return (
+                    <g
+                      key={i}
+                      className="cursor-pointer group"
+                      onClick={() => setEduIndex(i)}
+                    >
+                      {/* Aura néon active */}
+                      {isActive && (
+                        <>
+                          <circle
+                            cx={node.x}
+                            cy={node.y}
+                            r="9"
+                            fill="none"
+                            stroke="#38bdf8"
+                            strokeWidth="0.8"
+                            opacity="0.4"
+                            className="animate-pulse"
+                          />
+                          <circle
+                            cx={node.x}
+                            cy={node.y}
+                            r="5"
+                            fill="none"
+                            stroke="#38bdf8"
+                            strokeWidth="1.2"
+                          />
+                        </>
+                      )}
+
+                      <circle
+                        cx={node.x}
+                        cy={node.y}
+                        r={isActive ? "3.5" : "2.2"}
+                        fill={isActive ? "#ffffff" : "#3f3f46"}
+                        stroke={isActive ? "#38bdf8" : "#27272a"}
+                        strokeWidth="1"
+                        className="transition-all duration-300"
+                      />
+
+                      <text
+                        x={node.x}
+                        y={node.y - 6}
+                        textAnchor="middle"
+                        fill={isActive ? "#38bdf8" : "#71717a"}
+                        fontSize="2.8"
+                        fontFamily="monospace"
+                        fontWeight={isActive ? "bold" : "normal"}
+                      >
+                        {node.label}
+                      </text>
+                    </g>
+                  );
+                })}
+              </svg>
+            </div>
+          </div>
+
+          {/* Côté Droit (7 cols) : Carte du diplôme avec Logo & Bouton Expand */}
+          <div className="lg:col-span-7 flex flex-col justify-between">
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-xs uppercase tracking-widest text-zinc-500 font-mono">
+                Curriculum Structure
+              </span>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={prevEdu}
+                  className="rounded-lg border border-white/10 bg-zinc-900/60 p-2 text-zinc-400 hover:border-cyan-500/50 hover:text-white transition"
+                  aria-label="Previous"
+                >
+                  <ChevronLeft className="size-4" />
+                </button>
+                <button
+                  onClick={nextEdu}
+                  className="rounded-lg border border-white/10 bg-zinc-900/60 p-2 text-zinc-400 hover:border-cyan-500/50 hover:text-white transition"
+                  aria-label="Next"
+                >
+                  <ChevronRight className="size-4" />
+                </button>
+              </div>
+            </div>
+
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={eduIndex}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+                className="rounded-3xl border border-white/10 bg-gradient-to-br from-zinc-900/80 via-zinc-950/90 to-[#060709] p-8 shadow-2xl backdrop-blur-xl relative overflow-hidden"
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex items-start gap-4">
+                    {/* Logo d'université stylisé */}
+                    <div
+                      className={`h-12 w-12 rounded-2xl bg-gradient-to-tr ${activeEdu.logoColor} flex items-center justify-center text-xs font-bold text-white shadow-lg shrink-0`}
+                    >
+                      {activeEdu.logoText}
+                    </div>
+                    <div>
+                      <span className="font-mono text-xs text-cyan-400">
+                        {activeEdu.start} — {activeEdu.end}
+                      </span>
+                      <h3 className="text-xl sm:text-2xl font-semibold text-white mt-0.5">
+                        {activeEdu.degree}
+                      </h3>
+                      <p className="text-xs sm:text-sm text-zinc-400 flex items-center gap-1.5 mt-0.5">
+                        <MapPin className="size-3 text-zinc-500" />
+                        {activeEdu.school} ·{" "}
+                        <span className="text-zinc-500">{activeEdu.faculty}</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  {/* Bouton d'agrandissement plein écran / détails */}
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1.5 text-xs text-zinc-300 hover:border-cyan-500/50 hover:text-white transition shrink-0"
+                    title="Expand Full Curriculum"
+                  >
+                    <Maximize2 className="size-3.5 text-cyan-400" />
+                    <span className="hidden sm:inline">Details</span>
+                  </button>
+                </div>
+
+                <p className="text-sm text-zinc-300 italic border-l-2 border-cyan-500/40 pl-3 my-5">
+                  {activeEdu.headline}
+                </p>
+
+                {/* Synthèse des modules */}
+                <div className="space-y-3">
+                  <span className="text-xs uppercase tracking-wider text-zinc-500 font-mono">
+                    Overview Modules
+                  </span>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    {activeEdu.coreCurriculum.slice(0, 2).map((cat, idx) => (
+                      <div
+                        key={idx}
+                        className="rounded-xl border border-white/5 bg-white/5 p-3"
+                      >
+                        <h4 className="text-xs font-medium text-cyan-300">
+                          {cat.title}
+                        </h4>
+                        <p className="text-[11px] text-zinc-400 mt-1 line-clamp-2">
+                          {cat.items[0]}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Puces de navigation */}
+                <div className="flex items-center justify-between pt-6 mt-6 border-t border-white/5">
+                  <div className="flex items-center gap-2">
+                    {RESUME_DATA.education.map((_, i) => (
+                      <button
+                        key={i}
+                        onClick={() => setEduIndex(i)}
+                        className={`h-1.5 rounded-full transition-all duration-300 ${
+                          eduIndex === i
+                            ? "w-8 bg-cyan-400"
+                            : "w-2 bg-zinc-700 hover:bg-zinc-500"
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="text-xs text-cyan-400 hover:underline flex items-center gap-1"
+                  >
+                    View complete syllabus →
+                  </button>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
+      </section>
+
+      {/* ================= MODALE GRAND FORMAT (EXPANDED CURRICULUM) ================= */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="absolute inset-0 bg-black/80 backdrop-blur-md"
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 10 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 10 }}
+              className="relative w-full max-w-3xl max-h-[85vh] overflow-y-auto rounded-3xl border border-white/10 bg-zinc-950 p-6 sm:p-8 shadow-2xl text-zinc-100 z-10 space-y-6"
+            >
+              {/* Header Modale */}
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                  <div
+                    className={`h-12 w-12 rounded-2xl bg-gradient-to-tr ${activeEdu.logoColor} flex items-center justify-center text-xs font-bold text-white shrink-0`}
+                  >
+                    {activeEdu.logoText}
+                  </div>
+                  <div>
+                    <h3 className="text-xl sm:text-2xl font-bold text-white">
+                      {activeEdu.degree}
+                    </h3>
+                    <p className="text-xs text-zinc-400">
+                      {activeEdu.school} · {activeEdu.faculty} ({activeEdu.start} — {activeEdu.end})
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => setIsModalOpen(false)}
+                  className="rounded-full border border-white/10 p-2 text-zinc-400 hover:bg-white/10 hover:text-white transition"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+
+              <p className="text-sm text-zinc-300 italic border-l-2 border-cyan-500/50 pl-3">
+                {activeEdu.headline}
+              </p>
+
+              {/* Programme complet et détaillé */}
+              <div className="space-y-6 pt-2">
+                <span className="text-xs uppercase tracking-widest text-cyan-400 font-mono">
+                  Full Detailed Curriculum & Focus Areas
+                </span>
+
+                <div className="space-y-4">
+                  {activeEdu.coreCurriculum.map((section, idx) => (
+                    <div
+                      key={idx}
+                      className="rounded-2xl border border-white/5 bg-zinc-900/60 p-5 space-y-2"
+                    >
+                      <h4 className="text-sm font-semibold text-white">
+                        {section.title}
+                      </h4>
+                      <ul className="space-y-1.5 pl-1">
+                        {section.items.map((item, itemIdx) => (
+                          <li
+                            key={itemIdx}
+                            className="flex items-start gap-2.5 text-xs text-zinc-400 leading-relaxed"
+                          >
+                            <span className="size-1 rounded-full bg-cyan-400 mt-1.5 shrink-0" />
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
