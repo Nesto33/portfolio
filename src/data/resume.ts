@@ -11,15 +11,50 @@ export const RESUME_DATA = {
     tel: "+33 7 81 52 09 61",
     social: {
       github: "https://github.com/",
-      linkedin: "https://linkedin.com/in/",
+      linkedin: "https://linkedin.com/in/thomas-baillot-255517242",
     },
   },
+  // À insérer dans RESUME_DATA dans src/data/resume.ts
+
+  // Dans src/data/resume.ts, section personal :
+
+  personal: {
+    bio: "Passionate about understanding cognitive dynamics through code. When I am not modeling brain connectivity matrices or writing fullstack architectures, I explore complex systems in literature, cinema, and music.",
+    book: {
+      title: "Le soleil des Scortas",
+      author: "Laurent Gaudé",
+      takeaway: "A deep dive into self-reference, strange loops, minds, and computation.",
+      cover: "/images/scortas.jpg", // ou URL directe d'une couverture
+    },
+    movies: [
+      {
+        title: "Incendies",
+        director: "Denis Villeneuve",
+        tag: "Cognition & Time",
+        poster: "/images/incendies.jpe", // ou URL directe
+      },
+      {
+        title: "Juste la fin du monde",
+        director: "Xavier Dolan",
+        tag: "Physics & Scale",
+        poster: "/images/juste_fin_du_monde.jpg",
+      },
+      {
+        title: "Isle of dogs",
+        director: "Wes Anderson",
+        tag: "AI & Consciousness",
+        poster: "/images/dogs.jpg",
+      },
+    ],
+    spotifyEmbedUrl: "https://open.spotify.com/embed/playlist/34pZXHHcMlYTXVeL41Bwgo?utm_source=generator&si=de568e28e09e4170",
+  },
+
   education: [
     {
       id: "amu-cs",
       school: "Aix-Marseille Université",
       faculty: "Faculté des Sciences",
-      logo: "/logos/amu.png", // Dépose ton logo dans public/logos/amu.png
+      logo: "/images/amu.png", // Dépose ton logo dans public/logos/amu.png
       degree: "Master's Degree, Computer Science (CCI)",
       start: "Sept 2025",
       end: "Sept 2026",
@@ -84,7 +119,7 @@ export const RESUME_DATA = {
       id: "unistra-neuro",
       school: "Université de Strasbourg",
       faculty: "Faculté des Sciences de la Vie",
-      logo: "/logos/unistra.png", // Dépose ton logo dans public/logos/unistra.png
+      logo: "/images/unistra.png", // Dépose ton logo dans public/logos/unistra.png
       degree: "Master's Degree, Cognitive Neurosciences",
       start: "Sept 2023",
       end: "Jun 2025",
@@ -136,7 +171,7 @@ export const RESUME_DATA = {
       id: "unistra-psycho",
       school: "Université de Strasbourg",
       faculty: "Faculté de Psychologie",
-      logo: "/logos/unistra.png",
+      logo: "/images/unistra.png",
       degree: "Bachelor's Degree, Psychology & Cognitive Sciences",
       start: "2021",
       end: "2023",
@@ -174,7 +209,7 @@ export const RESUME_DATA = {
       id: "kleber-mpsi",
       school: "Lycée Kléber, Strasbourg",
       faculty: "CPGE (Classes Préparatoires aux Grandes Écoles)",
-      logo: "/logos/kleber.png", // Dépose ton logo dans public/logos/kleber.png
+      logo: "/images/unistra.png", // Dépose ton logo dans public/logos/kleber.png
       degree: "CPGE MPSI (Intensive Mathematics & Physics)",
       start: "Sept 2019",
       end: "Jun 2020",
